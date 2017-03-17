@@ -1,6 +1,9 @@
 package edu.uw.tessa_and_sam.melodious;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.*;
@@ -26,6 +29,9 @@ public class MainActivity extends AppCompatActivity implements PitchRecognizer.P
 
         this.pitchGenerator = new PitchGenerator();
         this.pitchGenerator.play(440, 2000);
+
+        ActionBar bar = getSupportActionBar();
+        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3D4249")));
     }
 
     public void pitchUpdated() {

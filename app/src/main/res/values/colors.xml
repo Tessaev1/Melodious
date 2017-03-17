@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--main-->
+    <color name="appBackground">#3D4249</color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!--game buttons-->
+    <color name="redButton">#CE5050</color>
+    <color name="redButtonAccent">#BC4949</color>
+    <color name="greenButton">#3AB8BC</color>
+    <color name="greenButtonAction">#31A6AA</color>
 </resources>

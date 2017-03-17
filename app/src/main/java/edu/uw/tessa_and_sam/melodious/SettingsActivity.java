@@ -1,5 +1,10 @@
 package edu.uw.tessa_and_sam.melodious;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -8,13 +13,31 @@ import android.view.*;
 import android.widget.*;
 
 public class SettingsActivity extends AppCompatActivity {
+    private SharedPreferences prefs;
+    private String fromNote;
+    private String toNote;
+    private String instrument;
+    private Spinner fromNoteSpinner;
+    private Spinner toNoteSpinner;
+    private Spinner instrumentSpinner;
+    private SeekBar noteSeekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        this.prefs = this.getSharedPreferences(getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE);
+        this.fromNote = this.prefs.getString(getString(R.string.fromNote_key),
+                getString(R.string.default_fromNote));
+        this.toNote = this.prefs.getString(getString(R.string.toNote_key),
+                getString(R.string.default_toNote));
+        this.instrument = this.prefs.getString(getString(R.string.instrument_key),
+                getString(R.string.default_instrument));
+
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3D4249")));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
@@ -23,9 +46,9 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void setSpinners() {
-        Spinner fromNoteSpinner = (Spinner) findViewById(R.id.fromNote);
-        Spinner toNoteSpinner = (Spinner) findViewById(R.id.toNote);
-        Spinner instrumentRangeSpinner = (Spinner) findViewById(R.id.instrumentRange);
+        this.fromNoteSpinner = (Spinner) findViewById(R.id.fromNote);
+        this.toNoteSpinner = (Spinner) findViewById(R.id.toNote);
+        this.instrumentSpinner = (Spinner) findViewById(R.id.instrumentRange);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> noteAdapter = ArrayAdapter.createFromResource(this,
@@ -38,16 +61,22 @@ public class SettingsActivity extends AppCompatActivity {
         instrumentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // Apply the adapter to the spinner
-        fromNoteSpinner.setAdapter(noteAdapter);
-        toNoteSpinner.setAdapter(noteAdapter);
-        instrumentRangeSpinner.setAdapter(instrumentAdapter);
+        this.fromNoteSpinner.setAdapter(noteAdapter);
+        this.toNoteSpinner.setAdapter(noteAdapter);
+        this.instrumentSpinner.setAdapter(instrumentAdapter);
     }
 
     public void watchSeekBar() {
-        SeekBar noteSeekBar = (SeekBar) findViewById(R.id.seekBar);
+        String noteSequence = this.prefs.getString(getString(R.string.note_sequence_key),
+                getString(R.string.default_note_sequence));
 
-        noteSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            final TextView currentNoteNum = (TextView) findViewById(R.id.currentNoteNum);
+        this.noteSeekBar = (SeekBar) findViewById(R.id.seekBar);
+        this.noteSeekBar.setProgress(Integer.parseInt(noteSequence));
+
+        final TextView currentNoteNum = (TextView) findViewById(R.id.currentNoteNum);
+        currentNoteNum.setText((Integer.parseInt(noteSequence) + 1) + "");
+
+        this.noteSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progressChanged = 0;
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
@@ -62,6 +91,22 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        SharedPreferences.Editor editor = this.prefs.edit();
+        editor.putString(getString(R.string.fromNote_key),
+                this.fromNoteSpinner.getSelectedItem().toString());
+        editor.putString(getString(R.string.toNote_key),
+                this.toNoteSpinner.getSelectedItem().toString());
+        editor.putString(getString(R.string.instrument_key),
+                this.instrumentSpinner.getSelectedItem().toString());
+        editor.putString(getString(R.string.note_sequence_key),
+                String.valueOf(this.noteSeekBar.getProgress()));
+        editor.commit();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.settings_actionbar, menu);
@@ -72,7 +117,7 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.finish();
+                this.onBackPressed();
                 return true;
 
             default:
