@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Melodious</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <string-array name="notes_array">
+        <item>A1</item>
+        <item>A2</item>
+        <item>A3</item>
+        <item>A4</item>
+        <item>A5</item>
+    </string-array>
+
+    <string-array name="intrument_array">
+        <item>Piano</item>
+        <item>Guitar</item>
+        <item>Voice</item>
+    </string-array>
 </resources>
