@@ -13,15 +13,19 @@ import android.util.Log;
 public class MainActivity extends AppCompatActivity implements PitchRecognizer.PitchRecognizerDelegate {
     static final int MY_RECORD_AUDIO_PERMISSION_CONST = 927;
     private PitchRecognizer pitchRecognizer;
+    private PitchGenerator pitchGenerator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        pitchRecognizer = new PitchRecognizer();
-        pitchRecognizer.setDelegate(this);
+        this.pitchRecognizer = new PitchRecognizer();
+        this.pitchRecognizer.setDelegate(this);
         this.checkPermissionsAndStartPitchRecognizer();
+
+        this.pitchGenerator = new PitchGenerator();
+        this.pitchGenerator.play(440, 2000);
     }
 
     public void pitchUpdated() {
