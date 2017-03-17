@@ -35,7 +35,13 @@ public class MainActivity extends AppCompatActivity implements PitchRecognizer.P
     }
 
     public void pitchUpdated() {
-        Log.i("MainActivity", "freq: " + pitchRecognizer.getCurrentFreq());
+        float freq = pitchRecognizer.getCurrentFreq();
+        if (freq < 0) {
+            return;
+        }
+
+        MusicUtil.NoteData noteData = MusicUtil.freq2name(freq);
+        Log.i("MainActivity", "note: " + noteData.name + noteData.octave);
     }
 
     private void checkPermissionsAndStartPitchRecognizer() {

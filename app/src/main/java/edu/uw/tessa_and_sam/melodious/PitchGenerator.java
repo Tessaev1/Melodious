@@ -17,7 +17,7 @@ public class PitchGenerator implements Runnable {
     public PitchGenerator() {
     }
 
-    public void play(float freq, float stopAfter) {
+    public void play(float freq, int stopAfter) {
         generator = new AudioGenerator(1024,0);
         generator.addAudioProcessor(new LowPassFS(1000, 44100));
         generator.addAudioProcessor(new SineGenerator(0.15, freq));
@@ -33,7 +33,7 @@ public class PitchGenerator implements Runnable {
                         generator.stop();
                     }
                 },
-                5000
+                stopAfter
         );
     }
 
