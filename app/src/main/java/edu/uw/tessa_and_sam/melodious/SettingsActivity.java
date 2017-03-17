@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -51,15 +52,15 @@ public class SettingsActivity extends AppCompatActivity {
         SeekBar noteSeekBar = (SeekBar) findViewById(R.id.seekBar);
 
         noteSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            final TextView currentNoteNum = (TextView) findViewById(R.id.currentNoteNum);
             int progressChanged = 0;
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
                 progressChanged = progress;
+                currentNoteNum.setText(String.valueOf(progress + 1));
             }
 
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) {}
 
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
