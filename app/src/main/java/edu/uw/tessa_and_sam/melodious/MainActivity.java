@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements PitchRecognizer.P
     static final int MY_RECORD_AUDIO_PERMISSION_CONST = 927;
     private PitchRecognizer pitchRecognizer;
     private PitchGenerator pitchGenerator;
+    private GridView gridview;
     private View selectedItem;
 
     @Override
@@ -29,33 +30,15 @@ public class MainActivity extends AppCompatActivity implements PitchRecognizer.P
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-
         this.prefs = this.getSharedPreferences(this.getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE);
-        String noteSequence = this.prefs.getString(this.getString(R.string.note_sequence_key),
-                this.getString(R.string.default_note_sequence));
-        String[] notes = new String[Integer.parseInt(noteSequence) + 1];
+        this.gridview = (GridView) findViewById(R.id.grid);
 
-        GridView gridview = (GridView) findViewById(R.id.grid);
-        gridview.setColumnWidth(size.x);
-        Log.i("Main", "screen width: " + size.x);
-        gridview.setNumColumns(notes.length);
-
-        gridview.setAdapter(new GridAdapter(this));
-
-//        gridview.setHorizontalSpacing(border);
-//        gridview.setVerticalSpacing(border);
-
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        this.gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 if (MainActivity.this.selectedItem == null) {
                     MainActivity.this.selectedItem = v;
-                    MainActivity.this.selectedItem.setBackgroundResource(R.drawable.border);
+                    MainActivity.this.selectedItem.setBackgroundResource(R.drawable.border_clicked);
                 }
                 if (MainActivity.this.selectedItem != v) {
                     MainActivity.this.selectedItem.setBackgroundResource(R.drawable.border);
@@ -70,10 +53,34 @@ public class MainActivity extends AppCompatActivity implements PitchRecognizer.P
 //        this.checkPermissionsAndStartPitchRecognizer();
 
         this.pitchGenerator = new PitchGenerator();
-        this.pitchGenerator.play(440, 2000);
+//        this.pitchGenerator.play(440, 2000);
 
         ActionBar bar = getSupportActionBar();
         bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3D4249")));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.setGridAdapter();
+    }
+
+    private void setGridAdapter() {
+        String noteSequence = this.prefs.getString(this.getString(R.string.note_sequence_key),
+                this.getString(R.string.default_note_sequence));
+        String[] notes = new String[Integer.parseInt(noteSequence) + 1];
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        if (notes.length < 4) {
+            this.gridview.setColumnWidth((size.x / notes.length) - 100);
+        } else {
+            this.gridview.setColumnWidth(250);
+        }
+
+        this.gridview.setAdapter(new GridAdapter(this, size.x));
     }
 
     public void pitchUpdated() {

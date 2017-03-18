@@ -3,11 +3,8 @@ package edu.uw.tessa_and_sam.melodious;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.TextView;
+import android.view.*;
+import android.widget.*;
 
 /**
  * Created by Tessa on 3/17/17.
@@ -17,10 +14,11 @@ public class GridAdapter extends BaseAdapter {
     private Context context;
     private SharedPreferences prefs;
     private TextView[] notes;
-    private GridView gridview;
+    private int screenWidth;
 
-    public GridAdapter(Context context) {
+    public GridAdapter(Context context, int width) {
         this.context = context;
+        this.screenWidth = width;
         this.prefs = context.getSharedPreferences(context.getString(R.string.preference_file_key),
                 Context.MODE_PRIVATE);
         String noteSequence = this.prefs.getString(context.getString(R.string.note_sequence_key),
@@ -37,14 +35,19 @@ public class GridAdapter extends BaseAdapter {
     }
 
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
+        int boxSize = 280;
+        if (this.notes.length < 3) {
+            boxSize = (this.screenWidth / (this.notes.length * 2) + (75 * this.notes.length));
+        }
+
         TextView tv;
         if (convertView == null) {
             tv = new TextView(context);
-            tv.setLayoutParams(new GridView.LayoutParams(200, 200));
+            tv.setLayoutParams(new GridView.LayoutParams(boxSize, boxSize));
         }
         else {
             tv = (TextView) convertView;
@@ -54,7 +57,8 @@ public class GridAdapter extends BaseAdapter {
         tv.setBackgroundResource(R.drawable.border);
 //        tv.setText(notes[position]);
         tv.setText("A3");
-        tv.setTextSize(20);
+        tv.setTextSize(boxSize / 6);
+        tv.setGravity(Gravity.CENTER);
         return tv;
     }
 }
