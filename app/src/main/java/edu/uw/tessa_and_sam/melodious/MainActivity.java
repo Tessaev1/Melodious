@@ -1,7 +1,10 @@
 package edu.uw.tessa_and_sam.melodious;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,20 +15,59 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.*;
 
 public class MainActivity extends AppCompatActivity implements PitchRecognizer.PitchRecognizerDelegate {
+    private SharedPreferences prefs;
     static final int MY_RECORD_AUDIO_PERMISSION_CONST = 927;
     private PitchRecognizer pitchRecognizer;
     private PitchGenerator pitchGenerator;
+    private View selectedItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+
+        this.prefs = this.getSharedPreferences(this.getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE);
+        String noteSequence = this.prefs.getString(this.getString(R.string.note_sequence_key),
+                this.getString(R.string.default_note_sequence));
+        String[] notes = new String[Integer.parseInt(noteSequence) + 1];
+
+        GridView gridview = (GridView) findViewById(R.id.grid);
+        gridview.setColumnWidth(size.x);
+        Log.i("Main", "screen width: " + size.x);
+        gridview.setNumColumns(notes.length);
+
+        gridview.setAdapter(new GridAdapter(this));
+
+//        gridview.setHorizontalSpacing(border);
+//        gridview.setVerticalSpacing(border);
+
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                if (MainActivity.this.selectedItem == null) {
+                    MainActivity.this.selectedItem = v;
+                    MainActivity.this.selectedItem.setBackgroundResource(R.drawable.border);
+                }
+                if (MainActivity.this.selectedItem != v) {
+                    MainActivity.this.selectedItem.setBackgroundResource(R.drawable.border);
+                    MainActivity.this.selectedItem = v;
+                    v.setBackgroundResource(R.drawable.border_clicked);
+                }
+            }
+        });
+
         this.pitchRecognizer = new PitchRecognizer();
         this.pitchRecognizer.setDelegate(this);
-        this.checkPermissionsAndStartPitchRecognizer();
+//        this.checkPermissionsAndStartPitchRecognizer();
 
         this.pitchGenerator = new PitchGenerator();
         this.pitchGenerator.play(440, 2000);
