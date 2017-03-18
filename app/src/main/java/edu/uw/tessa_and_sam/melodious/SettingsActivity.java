@@ -1,6 +1,5 @@
 package edu.uw.tessa_and_sam.melodious;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -35,6 +34,9 @@ public class SettingsActivity extends AppCompatActivity {
                 getString(R.string.default_toNote));
         this.instrument = this.prefs.getString(getString(R.string.instrument_key),
                 getString(R.string.default_instrument));
+        this.fromNoteSpinner = (Spinner) findViewById(R.id.fromNote);
+        this.toNoteSpinner = (Spinner) findViewById(R.id.toNote);
+        this.instrumentSpinner = (Spinner) findViewById(R.id.instrumentRange);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3D4249")));
@@ -46,15 +48,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void setSpinners() {
-        this.fromNoteSpinner = (Spinner) findViewById(R.id.fromNote);
-        this.toNoteSpinner = (Spinner) findViewById(R.id.toNote);
-        this.instrumentSpinner = (Spinner) findViewById(R.id.instrumentRange);
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> noteAdapter = ArrayAdapter.createFromResource(this,
-                R.array.notes_array, android.R.layout.simple_spinner_item);
+                R.array.notes_array, R.layout.spinner_item);
         ArrayAdapter<CharSequence> instrumentAdapter = ArrayAdapter.createFromResource(this,
-                R.array.intrument_array, android.R.layout.simple_spinner_item);
+                R.array.intrument_array, R.layout.spinner_item);
 
         // Specify the layout to use when the list of choices appears
         noteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -62,8 +59,16 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Apply the adapter to the spinner
         this.fromNoteSpinner.setAdapter(noteAdapter);
+        int fromPosition = noteAdapter.getPosition(this.fromNote);
+        this.fromNoteSpinner.setSelection(fromPosition);
+
         this.toNoteSpinner.setAdapter(noteAdapter);
+        int toPosition = noteAdapter.getPosition(this.toNote);
+        this.toNoteSpinner.setSelection(toPosition);
+
         this.instrumentSpinner.setAdapter(instrumentAdapter);
+        int instrumentPosition = instrumentAdapter.getPosition(this.instrument);
+        this.instrumentSpinner.setSelection(instrumentPosition);
     }
 
     public void watchSeekBar() {
@@ -121,8 +126,7 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
 
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
+                // user's action was not recognized.
                 return super.onOptionsItemSelected(item);
 
         }

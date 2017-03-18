@@ -101,8 +101,7 @@ public class MainActivity extends AppCompatActivity implements PitchRecognizer.P
                     new String[]{ Manifest.permission.RECORD_AUDIO },
                     MY_RECORD_AUDIO_PERMISSION_CONST);
         }
-        else
-        {
+        else {
             pitchRecognizer.start();
         }
     }
@@ -144,9 +143,7 @@ public class MainActivity extends AppCompatActivity implements PitchRecognizer.P
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
                     this.pitchRecognizer.start();
-                }
-                else
-                {
+                } else {
                     Log.i("MainActivity", "Audio Permission Denied");
                 }
                 return;
